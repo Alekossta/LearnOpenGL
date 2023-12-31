@@ -147,7 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="D:\Downloads\glad (1)\src\glad.c" />
+    <ClCompile Include="glad.c" />
     <ClCompile Include="LearnOpenGL.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
