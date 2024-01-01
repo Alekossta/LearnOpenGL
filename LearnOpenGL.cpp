@@ -52,6 +52,83 @@ int main()
     // every time our window changes size call our function
     glfwSetFramebufferSizeCallback(window, window_resize_callback);
 
+    // simple 2d triangle located in centre of screen/viewport
+    float vertices[] = {
+        -0.5f, -0.5f, 0.0f, // bottom left vertex
+        0.f, 0.5f, 0.0f, // top middle vertex   
+        0.5f, -0.5f, 0.0f // bottom right vertex
+    };
+
+    unsigned VBO;
+    glGenBuffers(1, &VBO); // generate the buffer
+    glBindBuffer(GL_ARRAY_BUFFER, VBO); // bind the generated buffer
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // pass our data to the buffer
+
+    // vertex shader
+    const char* vertexShaderSource = "#version 330 core\n"
+    "layout (location = 0) in vec3 aPos;\n"
+    "void main()\n"
+    "{\n"
+    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    "}\0";
+    unsigned vertexShader;
+    vertexShader = glCreateShader(GL_VERTEX_SHADER); // create shader of type vertex
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL); // pass our source code to the created shader
+    glCompileShader(vertexShader); // compile the source code we gave our shader
+
+    // check for errors in compilation of vertex shader
+    int success;
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        char infoLog[512];
+        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+        std::cout << "Error in compilation of vertex shader" << std::endl << infoLog << std::endl;
+    }
+
+    // fragment shader
+    const char* fragmentShaderSource = "#version 330 core\n"
+    "out vec4 FragColor;\n"
+    "void main()\n"
+    "{\n"
+    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+    "}\n\0";
+    unsigned fragmentShader;
+    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER); // create shader of type fragment
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL); // pass source to fragment shader we created
+    glCompileShader(fragmentShader); // compile shader
+    // check for errors in compilation of fragment shader
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        char infoLog[512];
+        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+        std::cout << "Error in compilation of fragment shader" << std::endl << infoLog << std::endl;
+    }
+
+    // shader program
+    unsigned shaderProgram;
+    shaderProgram = glCreateProgram(); // create the shader program
+    glAttachShader(shaderProgram, vertexShader); // attach the vertex shader to our shader program
+    glAttachShader(shaderProgram, fragmentShader); // attach the fragment shader to our shader program
+    glLinkProgram(shaderProgram); // link everything
+
+    // check if the linking and everything with the shader program was successfull
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    if (!success)
+    {
+        char infoLog[512];
+        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+        std::cout << "Error in linking of shader program" << std::endl << infoLog << std::endl;
+    }
+
+    // for all next renders use the shader program we created
+    glUseProgram(shaderProgram);
+
+    // the shaders we made are inside our shader program right now so we dont need them anymore
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
     while (!glfwWindowShouldClose(window))
     {
         handleInput(window);
