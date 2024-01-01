@@ -59,10 +59,23 @@ int main()
         0.5f, -0.5f, 0.0f // bottom right vertex
     };
 
+    // managing a lot of vertex attributes in a lot of vertex buffer objects can be difficult.
+    // for that reason we use vertex array objects in order to store our attribute handling data.
+    // so basically VAOS are used to store state.
+    unsigned VAO;
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+
     unsigned VBO;
     glGenBuffers(1, &VBO); // generate the buffer
     glBindBuffer(GL_ARRAY_BUFFER, VBO); // bind the generated buffer
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // pass our data to the buffer
+
+    // above we have defined our vertex data. the vertex data consists of many vertex attributes. in our case
+    // we have only one vertex attribute. the position. so now we need to let opengl know about this.
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+    glEnableVertexAttribArray(0); // enable the attribute at location = 0 (position of vertex)
+
 
     // vertex shader
     const char* vertexShaderSource = "#version 330 core\n"
@@ -137,6 +150,9 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         // clear our color buffer
         glClear(GL_COLOR_BUFFER_BIT);
+
+        // render
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         // after we are done making our new image/buffer swap our buffers
         glfwSwapBuffers(window);
