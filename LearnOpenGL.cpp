@@ -163,9 +163,10 @@ int main()
 
     const char* fsSrcOrange = "#version 330 core\n"
         "out vec4 FragColor;\n"
+        "uniform vec4 ourColor;\n"
         "void main()\n"
         "{\n"
-        "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+        "   FragColor = ourColor;\n"
         "}\n\0";
 
     unsigned fsOrange;
@@ -208,8 +209,12 @@ int main()
         glBindVertexArray(lVAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        // right triangle orange
+        // right triangle red (with breathing effect)
+        float time = glfwGetTime();
+        float red = (sin(time) / 2.0f) + 0.5f;
+        int vertexColorLocation = glGetUniformLocation(spOrange, "ourColor");
         glUseProgram(spOrange);
+        glUniform4f(vertexColorLocation, red, 0.0f, 0.0f, 1.0f);
         glBindVertexArray(rVAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
