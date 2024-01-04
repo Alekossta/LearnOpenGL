@@ -54,61 +54,43 @@ int main()
 
     // two triangles
 
-    float ltVertices[] = {
+    float vertices[] = {
         // first triangle (left)
-        0.0f, 0.0f, 0.0f, // bottom right
-        -0.5f, 0.0f, 0.0f, // bottom left
-        -0.25, 0.5, 0.0f, // top
+        0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom right red
+        -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom left green
+        0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f // top blue
     };
 
-    float rtVertices[] = {
-        // second triangle (right)
-        0.0f, 0.0f, 0.0f, // bottom left
-        0.5f, 0.0f, 0.0f, // bottom right
-        0.25f, 0.5f, 0.0f, // top
-    };
+    unsigned VAO;
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
 
-    // managing a lot of vertex attributes in a lot of vertex buffer objects can be difficult.
-    // for that reason we use vertex array objects in order to store our attribute handling data.
-    // so basically VAOS are used to store state.
-    unsigned lVAO;
-    glGenVertexArrays(1, &lVAO);
-    glBindVertexArray(lVAO);
+    unsigned VBO;
+    glGenBuffers(1, &VBO); // generate the buffer
+    glBindBuffer(GL_ARRAY_BUFFER, VBO); // bind the generated buffer
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // pass our data to the buffer
 
-    unsigned lVBO;
-    glGenBuffers(1, &lVBO); // generate the buffer
-    glBindBuffer(GL_ARRAY_BUFFER, lVBO); // bind the generated buffer
-    glBufferData(GL_ARRAY_BUFFER, sizeof(ltVertices), ltVertices, GL_STATIC_DRAW); // pass our data to the buffer
+    // above we have defined our vertex data. the vertex data consists of many vertex attributes
 
-    // above we have defined our vertex data. the vertex data consists of many vertex attributes. in our case
-    // we have only one vertex attribute. the position. so now we need to let opengl know about this.
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)0);
     glEnableVertexAttribArray(0); // enable the attribute at location = 0 (position of vertex)
 
-    glBindVertexArray(0);
-
-    unsigned rVAO;
-    glGenVertexArrays(1, &rVAO);
-    glBindVertexArray(rVAO);
-
-    unsigned rVBO;
-    glGenBuffers(1, &rVBO); // generate the buffer
-    glBindBuffer(GL_ARRAY_BUFFER, rVBO); // bind the generated buffer
-    glBufferData(GL_ARRAY_BUFFER, sizeof(rtVertices), rtVertices, GL_STATIC_DRAW); // pass our data to the buffer
-
-    // above we have defined our vertex data. the vertex data consists of many vertex attributes. in our case
-    // we have only one vertex attribute. the position. so now we need to let opengl know about this.
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
-    glEnableVertexAttribArray(0); // enable the attribute at location = 0 (position of vertex)
+    // color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1); // enable the attribute at location = 0 (position of vertex)
 
     glBindVertexArray(0);
 
     // vertex shader
     const char* vertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
+    "layout (location = 1) in vec3 aColor;\n"
+    "out vec3 ourColor;"
     "void main()\n"
     "{\n"
     "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+        "ourColor = aColor;\n"
     "}\0";
     unsigned vertexShader;
     vertexShader = glCreateShader(GL_VERTEX_SHADER); // create shader of type vertex
@@ -126,72 +108,36 @@ int main()
     }
 
     // fragment shader
-    const char* fsSrcYellow = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);\n"
-    "}\n\0";
-    unsigned fsYellow;
-    fsYellow = glCreateShader(GL_FRAGMENT_SHADER); // create shader of type fragment
-    glShaderSource(fsYellow, 1, &fsSrcYellow, NULL); // pass source to fragment shader we created
-    glCompileShader(fsYellow); // compile shader
-    // check for errors in compilation of fragment shader
-    glGetShaderiv(fsYellow, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        char infoLog[512];
-        glGetShaderInfoLog(fsYellow, 512, NULL, infoLog);
-        std::cout << "Error in compilation of yellow fragment shader" << std::endl << infoLog << std::endl;
-    }
-
-    // shader program
-    unsigned spYellow;
-    spYellow = glCreateProgram(); // create the shader program
-    glAttachShader(spYellow, vertexShader); // attach the vertex shader to our shader program
-    glAttachShader(spYellow, fsYellow); // attach the fragment shader to our shader program
-    glLinkProgram(spYellow); // link everything
-
-    // check if the linking and everything with the shader program was successfull
-    glGetProgramiv(spYellow, GL_LINK_STATUS, &success);
-    if (!success)
-    {
-        char infoLog[512];
-        glGetProgramInfoLog(spYellow, 512, NULL, infoLog);
-        std::cout << "Error in linking of shader program" << std::endl << infoLog << std::endl;
-    }
-
-    const char* fsSrcOrange = "#version 330 core\n"
+    const char* fragmentShaderSource = "#version 330 core\n"
         "out vec4 FragColor;\n"
-        "uniform vec4 ourColor;\n"
+        "in vec3 ourColor;\n"
         "void main()\n"
         "{\n"
-        "   FragColor = ourColor;\n"
+        "   FragColor = vec4(ourColor, 1.0f);\n"
         "}\n\0";
 
-    unsigned fsOrange;
-    fsOrange = glCreateShader(GL_FRAGMENT_SHADER); // create shader of type fragment
-    glShaderSource(fsOrange, 1, &fsSrcOrange, NULL); // pass source to fragment shader we created
-    glCompileShader(fsOrange); // compile shader
+    unsigned fs;
+    fs = glCreateShader(GL_FRAGMENT_SHADER); // create shader of type fragment
+    glShaderSource(fs, 1, &fragmentShaderSource, NULL); // pass source to fragment shader we created
+    glCompileShader(fs); // compile shader
     // check for errors in compilation of fragment shader
-    glGetShaderiv(fsOrange, GL_COMPILE_STATUS, &success);
+    glGetShaderiv(fs, GL_COMPILE_STATUS, &success);
     if (!success)
     {
         char infoLog[512];
-        glGetShaderInfoLog(fsOrange, 512, NULL, infoLog);
-        std::cout << "Error in compilation of yellow fragment shader" << std::endl << infoLog << std::endl;
+        glGetShaderInfoLog(fs, 512, NULL, infoLog);
+        std::cout << "Error in compilation of fragment shader" << std::endl << infoLog << std::endl;
     }
 
-    unsigned spOrange;
-    spOrange = glCreateProgram();
-    glAttachShader(spOrange, vertexShader);
-    glAttachShader(spOrange, fsOrange);
-    glLinkProgram(spOrange);
+    unsigned sp;
+    sp = glCreateProgram();
+    glAttachShader(sp, vertexShader);
+    glAttachShader(sp, fs);
+    glLinkProgram(sp);
 
     // the shaders we made are inside our shader program right now so we dont need them anymore
     glDeleteShader(vertexShader);
-    glDeleteShader(fsYellow);
-    glDeleteShader(fsOrange);
+    glDeleteShader(fs);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -203,19 +149,8 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         // render
-
-        // left triangle yellow
-        glUseProgram(spYellow);
-        glBindVertexArray(lVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        // right triangle red (with breathing effect)
-        float time = glfwGetTime();
-        float red = (sin(time) / 2.0f) + 0.5f;
-        int vertexColorLocation = glGetUniformLocation(spOrange, "ourColor");
-        glUseProgram(spOrange);
-        glUniform4f(vertexColorLocation, red, 0.0f, 0.0f, 1.0f);
-        glBindVertexArray(rVAO);
+        glUseProgram(sp);
+        glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         // after we are done making our new image/buffer swap our buffers
