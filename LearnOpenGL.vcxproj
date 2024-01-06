@@ -150,15 +150,20 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="LearnOpenGL.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="stb_imple.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment\default.fs" />
     <None Include="shaders\vertex\default.vs" />
     <None Include="shaders\vertex\flip.vs" />
     <None Include="shaders\vertex\offset.vs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="D:\Desktop\container.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

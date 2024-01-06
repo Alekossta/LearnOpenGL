@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "Shader.h"
+#include "stb_image.h"
 
 #include <iostream>
 
@@ -83,8 +84,20 @@ int main()
 
     glBindVertexArray(0);
 
-    //Shader defaultShader("shaders/vertex/default.vs", "shaders/fragment/default.fs");
-    Shader offsetShader("shaders/vertex/default.vs", "shaders/fragment/default.fs");
+    Shader defaultShader("shaders/vertex/default.vs", "shaders/fragment/default.fs");
+
+    unsigned texture;
+    glGenTextures(1, &texture); // generate a texture object
+    glBindTexture(GL_TEXTURE_2D, texture); // bind the texture
+
+    // load the image
+    int width, height, nrChannels;
+    unsigned char* data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    stbi_image_free(data);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -96,8 +109,8 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         // render
-        offsetShader.use();
-        offsetShader.setFloat("offsetRight", 0.25f);
+        defaultShader.use();
+        defaultShader.setFloat("offsetRight", 0.25f);
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 

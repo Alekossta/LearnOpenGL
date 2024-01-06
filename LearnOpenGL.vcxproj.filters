@@ -24,9 +24,15 @@
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="stb_imple.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -35,5 +41,10 @@
     <None Include="shaders\vertex\default.vs" />
     <None Include="shaders\vertex\flip.vs" />
     <None Include="shaders\vertex\offset.vs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="D:\Desktop\container.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
