@@ -1,5 +1,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "Shader.h"
 
 #include <iostream>
 
@@ -82,62 +83,7 @@ int main()
 
     glBindVertexArray(0);
 
-    // vertex shader
-    const char* vertexShaderSource = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "layout (location = 1) in vec3 aColor;\n"
-    "out vec3 ourColor;"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-        "ourColor = aColor;\n"
-    "}\0";
-    unsigned vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER); // create shader of type vertex
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL); // pass our source code to the created shader
-    glCompileShader(vertexShader); // compile the source code we gave our shader
-
-    // check for errors in compilation of vertex shader
-    int success;
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        char infoLog[512];
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        std::cout << "Error in compilation of vertex shader" << std::endl << infoLog << std::endl;
-    }
-
-    // fragment shader
-    const char* fragmentShaderSource = "#version 330 core\n"
-        "out vec4 FragColor;\n"
-        "in vec3 ourColor;\n"
-        "void main()\n"
-        "{\n"
-        "   FragColor = vec4(ourColor, 1.0f);\n"
-        "}\n\0";
-
-    unsigned fs;
-    fs = glCreateShader(GL_FRAGMENT_SHADER); // create shader of type fragment
-    glShaderSource(fs, 1, &fragmentShaderSource, NULL); // pass source to fragment shader we created
-    glCompileShader(fs); // compile shader
-    // check for errors in compilation of fragment shader
-    glGetShaderiv(fs, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        char infoLog[512];
-        glGetShaderInfoLog(fs, 512, NULL, infoLog);
-        std::cout << "Error in compilation of fragment shader" << std::endl << infoLog << std::endl;
-    }
-
-    unsigned sp;
-    sp = glCreateProgram();
-    glAttachShader(sp, vertexShader);
-    glAttachShader(sp, fs);
-    glLinkProgram(sp);
-
-    // the shaders we made are inside our shader program right now so we dont need them anymore
-    glDeleteShader(vertexShader);
-    glDeleteShader(fs);
+    Shader defaultShader("shaders/shader.vs", "shaders/shader.fs");
 
     while (!glfwWindowShouldClose(window))
     {
@@ -149,7 +95,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         // render
-        glUseProgram(sp);
+        defaultShader.use();
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
