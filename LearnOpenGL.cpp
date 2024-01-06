@@ -83,7 +83,8 @@ int main()
 
     glBindVertexArray(0);
 
-    Shader defaultShader("shaders/shader.vs", "shaders/shader.fs");
+    //Shader defaultShader("shaders/vertex/default.vs", "shaders/fragment/default.fs");
+    Shader offsetShader("shaders/vertex/default.vs", "shaders/fragment/default.fs");
 
     while (!glfwWindowShouldClose(window))
     {
@@ -95,7 +96,8 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         // render
-        defaultShader.use();
+        offsetShader.use();
+        offsetShader.setFloat("offsetRight", 0.25f);
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
