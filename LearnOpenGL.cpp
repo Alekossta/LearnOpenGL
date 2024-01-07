@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+float mixValue = 0.2f;
+
 void window_resize_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
@@ -15,6 +17,20 @@ void handleInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
         glfwSetWindowShouldClose(window, true);
+    }
+    
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+    {
+        mixValue += 0.001f; // change this value accordingly (might be too slow or too fast based on system hardware)
+        if (mixValue >= 1.0f)
+            mixValue = 1.0f;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    {
+        mixValue -= 0.001f; // change this value accordingly (might be too slow or too fast based on system hardware)
+        if (mixValue <= 0.0f)
+            mixValue = 0.0f;
     }
 }
 
@@ -153,7 +169,7 @@ int main()
         // clear our color buffer
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // render
+        defaultShader.setFloat("mixValue", mixValue);
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
