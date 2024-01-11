@@ -164,6 +164,21 @@ int main()
     defaultShader.setInt("texture1", 0);
     defaultShader.setInt("texture2", 1);
 
+    // vertex coordinates to world coordinates
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+    // world coordinates to view coordinates. move everything back so we can see it
+    glm::mat4 view = glm::mat4(1.0f);
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+
+    // view coordinates to projection
+    glm::mat4 projection;
+    const float fov = 45.0f;
+    const float nearPlaneDist = 0.1f;
+    const float farPlaneDist = 100.0f;
+    projection = glm::perspective(glm::radians(fov), 800.0f / 600.0f, nearPlaneDist, farPlaneDist);
+
     while (!glfwWindowShouldClose(window))
     {
         handleInput(window);
@@ -173,11 +188,18 @@ int main()
         // clear our color buffer
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glm::mat4 trans = glm::mat4(1.0f);
-        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-        unsigned transformLoc = glGetUniformLocation(defaultShader.getId(), "transform");
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
         defaultShader.setFloat("mixValue", mixValue);
+
+        // set our matrices
+        int modelLocation = glGetUniformLocation(defaultShader.getId(), "model");
+        glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
+
+        int viewLocation = glGetUniformLocation(defaultShader.getId(), "view");
+        glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(view));
+
+        int projectionLocation = glGetUniformLocation(defaultShader.getId(), "projection");
+        glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
+
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
