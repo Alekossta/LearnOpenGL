@@ -74,13 +74,49 @@ int main()
     // every time our window changes size call our function
     glfwSetFramebufferSizeCallback(window, window_resize_callback);
 
-    // rectangle
+    // cube
     float vertices[] = {
-        // position        // color          // texture cords
-        -0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,        // top left vertex
-        0.5f, 0.5f, 0.0f,  0.0f, 1.0f, 0.0f, 1.0f, 1.0f,        // top right vertex
-        -0.5f, -0.5f, 0.0f,0.0f, 0.0f, 1.0f, 0.0f, 0.0f,        // bottom left vertex
-        0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,        // bottom right
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
     unsigned VAO;
@@ -95,26 +131,12 @@ int main()
     // above we have defined our vertex data. the vertex data consists of many vertex attributes
 
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)0);
     glEnableVertexAttribArray(0); // enable the attribute at location = 0 (position of vertex)
 
-    // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1); // enable the attribute at location = 1 (color of vertex)
-
     // texture coordinates attribute
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2); // enable the attribute at location = 2 (texture coordinates of vertex)
-
-    int indices[] = {
-        0, 1, 2,
-        1, 2, 3
-    };
-
-    unsigned EBO; // element buffer object
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1); // enable the attribute at location = 2 (texture coordinates of vertex)
 
     glBindVertexArray(0);
 
@@ -164,44 +186,65 @@ int main()
     defaultShader.setInt("texture1", 0);
     defaultShader.setInt("texture2", 1);
 
-    // vertex coordinates to world coordinates
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    // enable depth test
+    glEnable(GL_DEPTH_TEST);
+
+    // set our clear color to greenish
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
+    glm::vec3 cubePositions[] = {
+        glm::vec3(0.0f,  0.0f,  0.0f),
+        glm::vec3(2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3(2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3(1.3f, -2.0f, -2.5f),
+        glm::vec3(1.5f,  2.0f, -2.5f),
+        glm::vec3(1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
+    };
+
+    glm::mat4 projection;
+    const float fov = 70.f;
+    const float nearPlaneDist = 0.1f;
+    const float farPlaneDist = 100.0f;
 
     // world coordinates to view coordinates. move everything back so we can see it
     glm::mat4 view = glm::mat4(1.0f);
     view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
     // view coordinates to projection
-    glm::mat4 projection;
-    const float fov = 45.0f;
-    const float nearPlaneDist = 0.1f;
-    const float farPlaneDist = 100.0f;
     projection = glm::perspective(glm::radians(fov), 800.0f / 600.0f, nearPlaneDist, farPlaneDist);
+
+    // set our matrices
+    int viewLocation = glGetUniformLocation(defaultShader.getId(), "view");
+    glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(view));
+
+    int projectionLocation = glGetUniformLocation(defaultShader.getId(), "projection");
+    glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
 
     while (!glfwWindowShouldClose(window))
     {
         handleInput(window);
 
-        // set our clear color to greenish
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        // clear our color buffer
-        glClear(GL_COLOR_BUFFER_BIT);
+        // clear color and depth buffer
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         defaultShader.setFloat("mixValue", mixValue);
 
-        // set our matrices
-        int modelLocation = glGetUniformLocation(defaultShader.getId(), "model");
-        glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
-
-        int viewLocation = glGetUniformLocation(defaultShader.getId(), "view");
-        glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(view));
-
-        int projectionLocation = glGetUniformLocation(defaultShader.getId(), "projection");
-        glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
-
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        for (unsigned int i = 0; i < 10; i++)
+        {
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, cubePositions[i]);
+            float angle = 20.0f * i;
+            model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            int modelLocation = glGetUniformLocation(defaultShader.getId(), "model");
+            glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
+
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
 
         // after we are done making our new image/buffer swap our buffers
         glfwSwapBuffers(window);
