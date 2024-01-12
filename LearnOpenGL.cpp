@@ -210,16 +210,8 @@ int main()
     const float nearPlaneDist = 0.1f;
     const float farPlaneDist = 100.0f;
 
-    // world coordinates to view coordinates. move everything back so we can see it
-    glm::mat4 view = glm::mat4(1.0f);
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-
     // view coordinates to projection
     projection = glm::perspective(glm::radians(fov), 800.0f / 600.0f, nearPlaneDist, farPlaneDist);
-
-    // set our matrices
-    int viewLocation = glGetUniformLocation(defaultShader.getId(), "view");
-    glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(view));
 
     int projectionLocation = glGetUniformLocation(defaultShader.getId(), "projection");
     glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
@@ -234,6 +226,16 @@ int main()
         defaultShader.setFloat("mixValue", mixValue);
 
         glBindVertexArray(VAO);
+
+        const float radius = 10.0f;
+        float camX = sin(glfwGetTime()) * radius;
+        float camZ = cos(glfwGetTime()) * radius;
+        glm::mat4 view;
+        view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+
+        int viewLocation = glGetUniformLocation(defaultShader.getId(), "view");
+        glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(view));
+
         for (unsigned int i = 0; i < 10; i++)
         {
             glm::mat4 model = glm::mat4(1.0f);
