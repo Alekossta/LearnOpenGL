@@ -147,10 +147,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="LearnOpenGL.cpp" />
-    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stb_imple.cpp" />
   </ItemGroup>
   <ItemGroup>
