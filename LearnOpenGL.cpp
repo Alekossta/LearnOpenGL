@@ -200,11 +200,17 @@ int main()
 
         glBindVertexArray(VAO);
         shadedShader.use();
-        shadedShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-        shadedShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-        shadedShader.setVec3("lightPos", lightPosition);
+        shadedShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+        shadedShader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+        shadedShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+        shadedShader.setFloat("material.shininess", 32.0f);
+        shadedShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+        shadedShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f); // darken diffuse light a bit
+        shadedShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+        shadedShader.setVec3("light.position", lightPosition);
         shadedShader.setVec3("viewPos", camera.Position);
         shadedShader.setMat4("projection", projection);
+
         shadedShader.setMat4("view", view);
 
         glBindVertexArray(VAO);
