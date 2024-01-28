@@ -45,5 +45,6 @@
   <ItemGroup>
     <None Include="shaders\fragment\default.fs" />
     <None Include="shaders\vertex\default.vs" />
+    <None Include="shaders\vertex\shaded.vs" />
   </ItemGroup>
 </Project>
