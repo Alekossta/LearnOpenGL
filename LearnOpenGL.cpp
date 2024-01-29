@@ -253,6 +253,9 @@ int main()
         shadedShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f); // darken diffuse light a bit
         shadedShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
         shadedShader.setVec3("light.position", lightPosition);
+        shadedShader.setFloat("light.constant", 1.0f);
+        shadedShader.setFloat("light.linear", 0.09f);
+        shadedShader.setFloat("light.quadratic", 0.032f);
         shadedShader.setVec3("viewPos", camera.Position);
         shadedShader.setMat4("projection", projection);
 
