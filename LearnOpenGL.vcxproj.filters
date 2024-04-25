@@ -24,15 +24,20 @@
     <ClCompile Include="stb_imple.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment\default.fs" />
     <None Include="shaders\vertex\default.vs" />
-    <None Include="shaders\vertex\shaded.vs" />
   </ItemGroup>
 </Project>
