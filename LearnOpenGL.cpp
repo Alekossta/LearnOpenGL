@@ -89,17 +89,34 @@ int main()
 
     defaultShader.use();
 
-    // LOAD TEXTURE
-    int width, height, nrChannels;
-    unsigned char* data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
+    // LOAD TEXTURES
+    stbi_set_flip_vertically_on_load(true);
 
-    unsigned texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    int width, height, nrChannels;
+    unsigned char* data1 = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
+
+    unsigned texture1;
+    glGenTextures(1, &texture1);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture1);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data1);
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    stbi_image_free(data);
+    
+    unsigned char* data2 = stbi_load("awesomeface.png", &width, &height, &nrChannels, 0);
+
+    unsigned texture2;
+    glGenTextures(1, &texture2);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data2);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    defaultShader.setInt("texture1", 0);
+    defaultShader.setInt("texture2", 1);
+
+    stbi_image_free(data1);
+    stbi_image_free(data2);
 
     // RENDERING LOOP
     while (!glfwWindowShouldClose(window))
