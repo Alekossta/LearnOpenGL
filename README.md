@@ -1,2 +1,2 @@
-Learn OpenGL repo. Read Notes.pdf
+Learn OpenGL repo. Read Notes.pdf.
 Following https://learnopengl.com
