@@ -7,6 +7,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+const float width = 800;
+const float height = 600;
+
 float vertices[] = {
     // positions          // colors           // texture coords
      0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
@@ -36,7 +39,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // CREATE THE WINDOW
-    GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(width, height, "LearnOpenGL", NULL, NULL);
     if (!window)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -118,13 +121,23 @@ int main()
     defaultShader.setInt("texture1", 0);
     defaultShader.setInt("texture2", 1);
 
-    // ADD A ROTATION
-    glm::mat4 transform = glm::mat4(1.0f);
-    transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0, 0, 1));
-    defaultShader.setMatrix("transform", transform);
-
     stbi_image_free(data1);
     stbi_image_free(data2);
+
+    // CREATE A PERSPECTIVE MATRIX
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height,0.1f, 100.0f);
+
+    // CREATE A MODEL MATRIX
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+    // CREATE A VIEW MATRIX
+    glm::mat4 view = glm::mat4(1.0f);
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+
+    defaultShader.setMatrix("projection", projection);
+    defaultShader.setMatrix("model", model);
+    defaultShader.setMatrix("view", view);
 
     // RENDERING LOOP
     while (!glfwWindowShouldClose(window))
