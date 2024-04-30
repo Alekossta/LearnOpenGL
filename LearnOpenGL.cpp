@@ -3,6 +3,9 @@
 #include <iostream>
 #include "stb_image.h"
 #include "Shader.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 float vertices[] = {
     // positions          // colors           // texture coords
@@ -114,6 +117,11 @@ int main()
 
     defaultShader.setInt("texture1", 0);
     defaultShader.setInt("texture2", 1);
+
+    // ADD A ROTATION
+    glm::mat4 transform = glm::mat4(1.0f);
+    transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0, 0, 1));
+    defaultShader.setMatrix("transform", transform);
 
     stbi_image_free(data1);
     stbi_image_free(data2);
