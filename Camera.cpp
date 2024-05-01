@@ -1,6 +1,11 @@
 #include "Camera.h"
 
-void Camera::mouseMoved(double xpos, double ypos)
+
+Camera::Camera(float windowWidth, float windowHeight) : lastMouseX(windowWidth/2), lastMouseY(windowHeight/2)
+{
+}
+
+void Camera::rotate(double xpos, double ypos)
 {
     if (firstMouse)
     {
@@ -30,7 +35,21 @@ void Camera::mouseMoved(double xpos, double ypos)
     cameraFront = glm::normalize(direction);
 }
 
+void Camera::move(GLFWwindow* window)
+{
+    const float cameraSpeed = 2.5f * Time::getDeltaTime();
+    // CAMERA MOVEMENT
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        cameraPos += cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        cameraPos -= cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+}
+
 glm::mat4 Camera::getViewMatrix()
 {
-    return glm::mat4();
+    return glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 }

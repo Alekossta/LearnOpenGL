@@ -152,11 +152,13 @@
     <ClCompile Include="LearnOpenGL.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stb_imple.cpp" />
+    <ClCompile Include="Time.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="Time.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment\default.fs" />

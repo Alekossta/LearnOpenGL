@@ -6,23 +6,14 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "Camera.h"
+#include "Time.h"
 
 const float width = 800;
 const float height = 600;
 
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-
-float cameraYaw = -90.f;
-float cameraPitch = 0.f;
-
-float deltaTime = 0.0f;
-float lastFrame = 0.0f;
-
-// MOUSE STARTS AT CENTER OF WINDOW
-float lastMouseX = width / 2;
-float lastMouseY = height / 2;
+Camera camera = Camera(width,height);
+Time timer;
 
 float vertices[] = {
     -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -75,7 +66,7 @@ void resizeEvent(GLFWwindow* window, int newWidth, int newHeight)
 
 void mouseEvent(GLFWwindow* window, double xpos, double ypos)
 {
-
+    camera.rotate(xpos, ypos);
 }
 
 void handleInput(GLFWwindow* window)
@@ -84,23 +75,7 @@ void handleInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    const float cameraSpeed = 2.5f * deltaTime;
-    // CAMERA MOVEMENT
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        cameraPos += cameraSpeed * cameraFront;
-    if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        cameraPos -= cameraSpeed * cameraFront;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-    if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-}
-
-void handleDeltaTime()
-{
-    float currentFrame = glfwGetTime();
-    deltaTime = currentFrame - lastFrame;
-    lastFrame = currentFrame;
+    camera.move(window);
 }
 
 int main()
@@ -179,7 +154,6 @@ int main()
     glBindTexture(GL_TEXTURE_2D, texture1);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data1);
     glGenerateMipmap(GL_TEXTURE_2D);
-
     
     unsigned char* data2 = stbi_load("awesomeface.png", &width, &height, &nrChannels, 0);
 
@@ -213,12 +187,12 @@ int main()
     // RENDERING LOOP
     while (!glfwWindowShouldClose(window))
     {
-        handleDeltaTime();
+        timer.tick();
 
         handleInput(window);
 
         // UPDATE VIEW MATRIX
-        view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        view = camera.getViewMatrix();
         defaultShader.setMatrix("view", view);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
