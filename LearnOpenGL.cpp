@@ -17,12 +17,8 @@ glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 float cameraYaw = -90.f;
 float cameraPitch = 0.f;
 
-bool firstMouse = true;
-
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-
-const float mouseSensitivity = 0.1f;
 
 // MOUSE STARTS AT CENTER OF WINDOW
 float lastMouseX = width / 2;
@@ -79,32 +75,7 @@ void resizeEvent(GLFWwindow* window, int newWidth, int newHeight)
 
 void mouseEvent(GLFWwindow* window, double xpos, double ypos)
 {
-    if (firstMouse)
-    {
-        lastMouseX = xpos;
-        lastMouseY = ypos;
-        firstMouse = false;
-        return;
-    }
 
-    float xoffset = xpos - lastMouseX;
-    float yoffset = lastMouseY - ypos;
-    lastMouseX = xpos;
-    lastMouseY = ypos;
-
-    cameraYaw += xoffset * mouseSensitivity;
-    cameraPitch += yoffset * mouseSensitivity;
-
-    if (cameraPitch > 89.0f)
-        cameraPitch = 89.0f;
-    if (cameraPitch < -89.f)
-        cameraPitch = -89.f;
-
-    glm::vec3 direction;
-    direction.x = cos(glm::radians(cameraYaw)) * cos(glm::radians(cameraPitch));
-    direction.y = sin(glm::radians(cameraPitch));
-    direction.z = sin(glm::radians(cameraYaw)) * cos(glm::radians(cameraPitch));
-    cameraFront = glm::normalize(direction);
 }
 
 void handleInput(GLFWwindow* window)
