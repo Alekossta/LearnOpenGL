@@ -12,6 +12,7 @@ public:
 	void rotate(double xpos, double ypos);
 	void move(GLFWwindow* window);
 	glm::mat4 getViewMatrix();
+	glm::vec3 getPos() { return cameraPos; };
 private:
 	bool firstMouse = true;
 	float mouseSensitivity = 0.1f;

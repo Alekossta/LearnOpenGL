@@ -51,5 +51,7 @@
   <ItemGroup>
     <None Include="shaders\fragment\default.fs" />
     <None Include="shaders\vertex\default.vs" />
+    <None Include="shaders\vertex\textured.vs" />
+    <None Include="shaders\fragment\textured.fs" />
   </ItemGroup>
 </Project>
