@@ -10,6 +10,24 @@
 const float width = 800;
 const float height = 600;
 
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+float cameraYaw = -90.f;
+float cameraPitch = 0.f;
+
+bool firstMouse = true;
+
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+
+const float mouseSensitivity = 0.1f;
+
+// MOUSE STARTS AT CENTER OF WINDOW
+float lastMouseX = width / 2;
+float lastMouseY = height / 2;
+
 float vertices[] = {
     -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
      0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
@@ -59,6 +77,61 @@ void resizeEvent(GLFWwindow* window, int newWidth, int newHeight)
     glViewport(0, 0, newWidth, newHeight);
 }
 
+void mouseEvent(GLFWwindow* window, double xpos, double ypos)
+{
+    if (firstMouse)
+    {
+        lastMouseX = xpos;
+        lastMouseY = ypos;
+        firstMouse = false;
+        return;
+    }
+
+    float xoffset = xpos - lastMouseX;
+    float yoffset = lastMouseY - ypos;
+    lastMouseX = xpos;
+    lastMouseY = ypos;
+
+    cameraYaw += xoffset * mouseSensitivity;
+    cameraPitch += yoffset * mouseSensitivity;
+
+    if (cameraPitch > 89.0f)
+        cameraPitch = 89.0f;
+    if (cameraPitch < -89.f)
+        cameraPitch = -89.f;
+
+    glm::vec3 direction;
+    direction.x = cos(glm::radians(cameraYaw)) * cos(glm::radians(cameraPitch));
+    direction.y = sin(glm::radians(cameraPitch));
+    direction.z = sin(glm::radians(cameraYaw)) * cos(glm::radians(cameraPitch));
+    cameraFront = glm::normalize(direction);
+}
+
+void handleInput(GLFWwindow* window)
+{
+    // CLOSE THE APPLICATION IF WE PRESS ESCAPE
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+
+    const float cameraSpeed = 2.5f * deltaTime;
+    // CAMERA MOVEMENT
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        cameraPos += cameraSpeed * cameraFront;
+    if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        cameraPos -= cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+}
+
+void handleDeltaTime()
+{
+    float currentFrame = glfwGetTime();
+    deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
+}
+
 int main()
 {
     // INIT GLFW
@@ -91,6 +164,12 @@ int main()
 
     // ASSIGN A FUNCTION TO THE "RESIZE" EVENT
     glfwSetFramebufferSizeCallback(window, resizeEvent);
+
+    // MAKE SO THAT OUR MOUSE IS HIDDEN AND CAPTURED (GETS LOCKED TO CENTER OF OUR WINDOW)
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    // BIND MOUSE MOVEMENT EVENT
+    glfwSetCursorPosCallback(window, mouseEvent);
 
     // SET OUR CLEAR COLOR
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -151,24 +230,25 @@ int main()
 
     // CREATE A MODEL MATRIX
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
     // CREATE A VIEW MATRIX
     glm::mat4 view = glm::mat4(1.0f);
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
     defaultShader.setMatrix("projection", projection);
     defaultShader.setMatrix("model", model);
-    defaultShader.setMatrix("view", view);
 
     glEnable(GL_DEPTH_TEST);
 
     // RENDERING LOOP
     while (!glfwWindowShouldClose(window))
     {
-        // CLOSE THE APPLICATION IF WE PRESS ESCAPE
-        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-            glfwSetWindowShouldClose(window, true);
+        handleDeltaTime();
+
+        handleInput(window);
+
+        // UPDATE VIEW MATRIX
+        view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        defaultShader.setMatrix("view", view);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
