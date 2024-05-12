@@ -240,10 +240,16 @@ int main()
 
     texturedShader.setMatrix("projection", projection);
     texturedShader.setMatrix("model", texturedCubeModelMatrix);
-    texturedShader.setVector3("lightColor", glm::vec3(1.f, 1.f, 1.f));
-    texturedShader.setVector3("objectColor", glm::vec3(1.f, 0.5f, 0.f));
-    texturedShader.setVector3("lightPos", lightPos);
 
+    texturedShader.setVector3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+    texturedShader.setVector3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+    texturedShader.setVector3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+    texturedShader.setFloat("material.shininess", 32.0f);
+
+    texturedShader.setVector3("light.position", lightPos);
+    texturedShader.setVector3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+    texturedShader.setVector3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+    texturedShader.setVector3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
     
     defaultShader.use();
     defaultShader.setMatrix("projection", projection);
