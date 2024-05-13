@@ -13,6 +13,7 @@ public:
 	void move(GLFWwindow* window);
 	glm::mat4 getViewMatrix();
 	glm::vec3 getPos() { return cameraPos; };
+	glm::vec3 getFront() { return cameraFront; };
 private:
 	bool firstMouse = true;
 	float mouseSensitivity = 0.1f;

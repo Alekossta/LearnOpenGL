@@ -242,6 +242,7 @@ int main()
     texturedShader.setMatrix("model", texturedCubeModelMatrix);
     texturedShader.setVector3("viewPos", camera.getPos());
 
+    // material
     texturedShader.setVector3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
     texturedShader.setInt("material.diffuse", 0);
     texturedShader.setInt("material.specular", 1);
@@ -261,6 +262,15 @@ int main()
     texturedShader.setFloat("pointLights[0].constant", 1.0f);
     texturedShader.setFloat("pointLights[0].linear", 0.09f);
     texturedShader.setFloat("pointLights[0].quadratic", 0.032f);
+
+    // spotlight
+    texturedShader.setFloat("spotlight.cutOff", glm::cos(glm::radians(12.5f)));
+    texturedShader.setFloat("spotlight.outerCutOff", glm::cos(glm::radians(17.5f)));
+
+
+    texturedShader.setVector3("spotlight.ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+    texturedShader.setVector3("spotlight.diffuse", glm::vec3(0.6f, 0.6f, 0.6f));
+    texturedShader.setVector3("spotlight.specular", glm::vec3(0.6f, 0.6f, 0.6f));
     
     defaultShader.use();
     defaultShader.setMatrix("projection", projection);
@@ -282,6 +292,8 @@ int main()
 
         texturedShader.use();
         texturedShader.setMatrix("view", view);
+        texturedShader.setVector3("spotlight.position", camera.getPos());
+        texturedShader.setVector3("spotlight.direction", camera.getFront());
         texturedShader.setVector3("viewPos", camera.getPos());
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
