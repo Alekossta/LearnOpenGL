@@ -240,19 +240,27 @@ int main()
 
     texturedShader.setMatrix("projection", projection);
     texturedShader.setMatrix("model", texturedCubeModelMatrix);
+    texturedShader.setVector3("viewPos", camera.getPos());
 
     texturedShader.setVector3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
     texturedShader.setInt("material.diffuse", 0);
     texturedShader.setInt("material.specular", 1);
     texturedShader.setFloat("material.shininess", 32.0f);
 
-    texturedShader.setVector3("light.position", lightPos);
-    texturedShader.setVector3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-    texturedShader.setVector3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-    texturedShader.setVector3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-    texturedShader.setFloat("light.constant", 1.0f);
-    texturedShader.setFloat("light.linear", 0.09f);
-    texturedShader.setFloat("light.quadratic", 0.032f);
+    // directional light
+    texturedShader.setVector3("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+    texturedShader.setVector3("dirLight.ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+    texturedShader.setVector3("dirLight.diffuse", glm::vec3(0.4f, 0.4f, 0.4f));
+    texturedShader.setVector3("dirLight.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+
+    // point light 0
+    texturedShader.setVector3("pointLights[0].position", lightPos);
+    texturedShader.setVector3("pointLights[0].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+    texturedShader.setVector3("pointLights[0].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+    texturedShader.setVector3("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+    texturedShader.setFloat("pointLights[0].constant", 1.0f);
+    texturedShader.setFloat("pointLights[0].linear", 0.09f);
+    texturedShader.setFloat("pointLights[0].quadratic", 0.032f);
     
     defaultShader.use();
     defaultShader.setMatrix("projection", projection);
