@@ -163,7 +163,7 @@ int main()
     glfwSetCursorPosCallback(window, mouseEvent);
 
     // SET OUR CLEAR COLOR
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(0.f, 0.f, 0.f, 1.0f);
 
     // CREATE A VERTEX ARRAY
     unsigned VAO;
@@ -250,6 +250,9 @@ int main()
     texturedShader.setVector3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
     texturedShader.setVector3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
     texturedShader.setVector3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+    texturedShader.setFloat("light.constant", 1.0f);
+    texturedShader.setFloat("light.linear", 0.09f);
+    texturedShader.setFloat("light.quadratic", 0.032f);
     
     defaultShader.use();
     defaultShader.setMatrix("projection", projection);
