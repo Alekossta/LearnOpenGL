@@ -216,7 +216,7 @@ int main()
         texturedShader.setVector3("spotlight.position", camera.getPos());
         texturedShader.setVector3("spotlight.direction", camera.getFront());
         texturedShader.setVector3("viewPos", camera.getPos());
-        backpackModel.Draw(texturedShader);
+        //backpackModel.Draw(texturedShader);
 
         defaultShader.use();
         defaultShader.setMatrix("view", view);
