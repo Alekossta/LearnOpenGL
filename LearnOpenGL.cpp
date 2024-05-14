@@ -198,6 +198,7 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     // Create Model
+    Model model("./backpack/backpack.obj");
 
     // RENDERING LOOP
     while (!glfwWindowShouldClose(window))
@@ -216,7 +217,7 @@ int main()
         texturedShader.setVector3("spotlight.position", camera.getPos());
         texturedShader.setVector3("spotlight.direction", camera.getFront());
         texturedShader.setVector3("viewPos", camera.getPos());
-        //backpackModel.Draw(texturedShader);
+        model.Draw(texturedShader);
 
         defaultShader.use();
         defaultShader.setMatrix("view", view);
