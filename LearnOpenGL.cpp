@@ -131,9 +131,10 @@ int main()
 
     glEnable(GL_DEPTH_TEST);
 
-    // Create Model
-    Model model("./backpack/backpack.obj");
-    Model model2("./cube.obj");
+    // Load and Create Model
+    Model backpackModel("./backpack/backpack.obj");
+    Model cubeModel("./cube.obj");
+    Model planeModel("./plane.obj");
 
     // Make matrix for light position
     glm::mat4 lightCubeModelMatrix = glm::mat4(1.0f);
@@ -156,38 +157,38 @@ int main()
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-        // UPDATE VIEW MATRIX
         view = camera.getViewMatrix();
         texturedShader.setMatrix("view", view);
         texturedShader.setMatrix("model", texturedCubeModelMatrix);
         texturedShader.setVector3("spotlight.position", camera.getPos());
         texturedShader.setVector3("spotlight.direction", camera.getFront());
         texturedShader.setVector3("viewPos", camera.getPos());
-        model.Draw(texturedShader);
+        backpackModel.Draw(texturedShader);
+
         // draw light cube
         colorShader.setMatrix("view", view);
         colorShader.setMatrix("model", lightCubeModelMatrix);
         colorShader.setVector3("color", glm::vec3(1.0f,1.0f,1.0f));
-        model2.Draw(colorShader);
+        cubeModel.Draw(colorShader);
+
         // draw outline cube
         glStencilMask(0x00);
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glStencilMask(0xFF);
 
-        // draw the normal cube
         colorShader.setMatrix("model", outlineCubeModelMatrix);
-        model2.Draw(colorShader);
+        cubeModel.Draw(colorShader);
 
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
         glStencilMask(0x00);
         glm::mat4 scaledCube = glm::scale(outlineCubeModelMatrix, glm::vec3(1.1f));
         colorShader.setMatrix("model", scaledCube);
         colorShader.setVector3("color", glm::vec3(1.0f, 0.0f, 0.0f));
-        model2.Draw(colorShader);
+        cubeModel.Draw(colorShader);
         glStencilMask(0xFF);
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
 
-        // need to add shader
+        // draw ground
 
         glfwSwapBuffers(window);
         glfwPollEvents(); // CHECKS IF ANY EVENTS ARE TRIGGERED
