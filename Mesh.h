@@ -11,14 +11,6 @@ struct Vertex
 {
 	glm::vec3 Position;
 	glm::vec3 Normal;
-	glm::vec2 TexCoords;
-};
-
-struct Texture
-{
-	unsigned id;
-	string type;
-	string path;
 };
 
 class Mesh
@@ -26,10 +18,9 @@ class Mesh
 public:
 	vector<Vertex> vertices;
 	vector<unsigned> indices;
-	vector<Texture> textures;
 
-	Mesh(vector<Vertex> vertices, vector<unsigned> indices, vector<Texture> textures);
-	void Draw(Shader& shader);
+	Mesh(vector<Vertex> vertices, vector<unsigned> indices);
+	void Draw();
 
 private:
 	unsigned VAO, VBO, EBO;

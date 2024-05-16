@@ -61,9 +61,11 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\fragment\color.fs" />
-    <None Include="shaders\vertex\color.vs" />
-    <None Include="shaders\vertex\textured.vs" />
-    <None Include="shaders\fragment\textured.fs" />
+    <None Include="shaders\vertex\unlit_color.vert" />
+    <None Include="shaders\vertex\lit_textured.vert" />
+    <None Include="shaders\fragment\unlit_color.frag" />
+    <None Include="shaders\fragment\lit_color.frag" />
+    <None Include="shaders\fragment\lit_textured.frag" />
+    <None Include="shaders\vertex\lit_color.vert" />
   </ItemGroup>
 </Project>
