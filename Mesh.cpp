@@ -11,6 +11,8 @@ Mesh::Mesh(vector<Vertex> vertices, vector<unsigned> indices, vector<Texture> te
 
 void Mesh::Draw(Shader& shader)
 {
+	shader.use();
+
 	unsigned diffuseNr = 1;
 	unsigned specularNr = 1;
 	for (unsigned i = 0; i < textures.size(); i++)

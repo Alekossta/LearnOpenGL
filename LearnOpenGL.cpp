@@ -16,50 +16,6 @@ const float height = 600;
 Camera camera = Camera(width,height);
 Time timer;
 
-float plainCubeVertices[] = {
-    -0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f,  0.5f, -0.5f,
-     0.5f,  0.5f, -0.5f,
-    -0.5f,  0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f,
-
-    -0.5f, -0.5f,  0.5f,
-     0.5f, -0.5f,  0.5f,
-     0.5f,  0.5f,  0.5f,
-     0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f,
-    -0.5f, -0.5f,  0.5f,
-
-    -0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f,
-    -0.5f, -0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f,
-
-     0.5f,  0.5f,  0.5f,
-     0.5f,  0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f,  0.5f,
-     0.5f,  0.5f,  0.5f,
-
-    -0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f,  0.5f,
-     0.5f, -0.5f,  0.5f,
-    -0.5f, -0.5f,  0.5f,
-    -0.5f, -0.5f, -0.5f,
-
-    -0.5f,  0.5f, -0.5f,
-     0.5f,  0.5f, -0.5f,
-     0.5f,  0.5f,  0.5f,
-     0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f, -0.5f
-};
-
 void resizeEvent(GLFWwindow* window, int newWidth, int newHeight)
 {
     glViewport(0, 0, newWidth, newHeight);
@@ -121,26 +77,8 @@ int main()
     // SET OUR CLEAR COLOR
     glClearColor(0.f, 0.f, 0.f, 1.0f);
 
-    // CREATE A VERTEX ARRAY
-    unsigned VAO;
-    glGenVertexArrays(1, &VAO);
-
-    unsigned plainCubeVAO;
-    glGenVertexArrays(1, &plainCubeVAO);
-
-    glBindVertexArray(plainCubeVAO);
-    unsigned plainCubeVBO;
-    glGenBuffers(1, &plainCubeVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, plainCubeVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(plainCubeVertices), plainCubeVertices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
     Shader texturedShader = Shader("shaders/vertex/textured.vs", "shaders/fragment/textured.fs");
-    Shader defaultShader = Shader("shaders/vertex/default.vs", "shaders/fragment/default.fs");
-
-    texturedShader.use();
+    Shader colorShader = Shader("shaders/vertex/color.vs", "shaders/fragment/color.fs");
 
     // LOAD TEXTURES
     stbi_set_flip_vertically_on_load(true);
@@ -150,9 +88,7 @@ int main()
 
     // CREATE A MODEL MATRIX
     glm::mat4 texturedCubeModelMatrix = glm::mat4(1.0f);
-    glm::mat4 plainCubeModelMatrix = glm::mat4(1.0f);
     glm::vec3 lightPos = glm::vec3(2.0f, 3.0f, -2.0f);
-    plainCubeModelMatrix = glm::translate(plainCubeModelMatrix, lightPos);
 
     // CREATE A VIEW MATRIX
     glm::mat4 view = glm::mat4(1.0f);
@@ -191,14 +127,25 @@ int main()
     texturedShader.setVector3("spotlight.diffuse", glm::vec3(0.6f, 0.6f, 0.6f));
     texturedShader.setVector3("spotlight.specular", glm::vec3(0.6f, 0.6f, 0.6f));
     
-    defaultShader.use();
-    defaultShader.setMatrix("projection", projection);
-    defaultShader.setMatrix("model", plainCubeModelMatrix);
+    colorShader.setMatrix("projection", projection);
 
     glEnable(GL_DEPTH_TEST);
 
     // Create Model
     Model model("./backpack/backpack.obj");
+    Model model2("./cube.obj");
+
+    // Make matrix for light position
+    glm::mat4 lightCubeModelMatrix = glm::mat4(1.0f);
+    lightCubeModelMatrix = glm::translate(lightCubeModelMatrix, lightPos);
+
+    glm::mat4 outlineCubeModelMatrix = glm::mat4(1.0f);
+    glm::vec3 outlineCubePosition = -lightPos;
+    outlineCubeModelMatrix = glm::translate(outlineCubeModelMatrix, outlineCubePosition);
+
+    // STENCIL SETUP
+    glEnable(GL_STENCIL_TEST);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
     // RENDERING LOOP
     while (!glfwWindowShouldClose(window))
@@ -207,22 +154,40 @@ int main()
 
         handleInput(window);
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         // UPDATE VIEW MATRIX
         view = camera.getViewMatrix();
-
-        texturedShader.use();
         texturedShader.setMatrix("view", view);
+        texturedShader.setMatrix("model", texturedCubeModelMatrix);
         texturedShader.setVector3("spotlight.position", camera.getPos());
         texturedShader.setVector3("spotlight.direction", camera.getFront());
         texturedShader.setVector3("viewPos", camera.getPos());
         model.Draw(texturedShader);
+        // draw light cube
+        colorShader.setMatrix("view", view);
+        colorShader.setMatrix("model", lightCubeModelMatrix);
+        colorShader.setVector3("color", glm::vec3(1.0f,1.0f,1.0f));
+        model2.Draw(colorShader);
+        // draw outline cube
+        glStencilMask(0x00);
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);
+        glStencilMask(0xFF);
 
-        defaultShader.use();
-        defaultShader.setMatrix("view", view);
-        glBindVertexArray(plainCubeVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        // draw the normal cube
+        colorShader.setMatrix("model", outlineCubeModelMatrix);
+        model2.Draw(colorShader);
+
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glStencilMask(0x00);
+        glm::mat4 scaledCube = glm::scale(outlineCubeModelMatrix, glm::vec3(1.1f));
+        colorShader.setMatrix("model", scaledCube);
+        colorShader.setVector3("color", glm::vec3(1.0f, 0.0f, 0.0f));
+        model2.Draw(colorShader);
+        glStencilMask(0xFF);
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);
+
+        // need to add shader
 
         glfwSwapBuffers(window);
         glfwPollEvents(); // CHECKS IF ANY EVENTS ARE TRIGGERED

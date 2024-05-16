@@ -165,9 +165,9 @@
     <ClInclude Include="Time.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\fragment\default.fs" />
+    <None Include="shaders\fragment\color.fs" />
     <None Include="shaders\fragment\textured.fs" />
-    <None Include="shaders\vertex\default.vs" />
+    <None Include="shaders\vertex\color.vs" />
     <None Include="shaders\vertex\textured.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
