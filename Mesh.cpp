@@ -1,11 +1,15 @@
 #include "Mesh.h"
 
-Mesh::Mesh(vector<Vertex> vertices, vector<unsigned> indices)
+Mesh::Mesh(vector<Vertex> vertices, vector<unsigned> indices, bool bSetupMesh)
 {
 	this->vertices = vertices;
 	this->indices = indices;
 
-	setupMesh();
+	if (bSetupMesh)
+	{
+		setupMesh(0);
+	}
+
 }
 
 void Mesh::Draw()
@@ -15,7 +19,7 @@ void Mesh::Draw()
 	glBindVertexArray(0);
 }
 
-void Mesh::setupMesh()
+void Mesh::setupMesh(GLsizei additionalData)
 {
 	// GENERATE OBJECTS
 	glGenVertexArrays(1, &VAO);
@@ -35,10 +39,10 @@ void Mesh::setupMesh()
 	// SETUP ATTRIBUTES
 
 	// // POSITION ATTRIBUTE
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex) + additionalData, (void*)0);
 	glEnableVertexAttribArray(0);
 
 	// // NORMAL ATTRIBUTE
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex) + additionalData, (void*)offsetof(Vertex, Normal));
 	glEnableVertexAttribArray(1);
 }

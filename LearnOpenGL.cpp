@@ -138,9 +138,9 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     // Load and Create Model
-    Model backpackModel("./backpack/backpack.obj");
     Model cubeModel("./cube.obj");
     Model planeModel("./plane.obj");
+    //Model grassPlane("./grass/grass.obj");
 
     // Make matrix for light position
     glm::mat4 lightCubeModelMatrix = glm::mat4(1.0f);

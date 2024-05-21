@@ -151,7 +151,9 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="LearnOpenGL.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshTextured.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ModelTextured.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stb_imple.cpp" />
     <ClCompile Include="Time.cpp" />
@@ -159,7 +161,9 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshTextured.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="ModelTextured.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Time.h" />

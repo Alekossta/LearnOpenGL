@@ -15,11 +15,9 @@ public:
 	void Draw(Shader& shader);
 private:
 	vector<Mesh> meshes;
-	string directory;
 
 	void loadModel(string path);
 	void processNode(aiNode* node, const aiScene* scene);
 	Mesh processMesh(aiMesh* mesh, const aiScene* scene);
-	unsigned TextureFromFile(const char* path, const string& directory, bool gamma);
 };
 

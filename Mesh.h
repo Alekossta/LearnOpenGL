@@ -19,12 +19,12 @@ public:
 	vector<Vertex> vertices;
 	vector<unsigned> indices;
 
-	Mesh(vector<Vertex> vertices, vector<unsigned> indices);
+	Mesh(vector<Vertex> vertices, vector<unsigned> indices, bool bSetupMesh);
 	void Draw();
 
-private:
+protected:
 	unsigned VAO, VBO, EBO;
 
-	void setupMesh();
+	virtual void setupMesh(GLsizei additionalData);
 };
 
